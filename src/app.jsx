@@ -10,12 +10,18 @@ var rootUrl = 'https://udemyreactapp.firebaseio.com/';
 var Hello = React.createClass({
   mixins: [ ReactFire ],
   getInitialState: function () {
-    return { items: {} };
+    return { items: {}, loaded: false };
   },
   componentWillMount: function () {
-    this.bindAsObject( new Firebase( rootUrl + 'items/' ), 'items' );
+    fb =  new Firebase( rootUrl + 'items/' ) ;
+    this.bindAsObject( fb, 'items' );
     // en este punto this.state.items es un objeto que contiene lo que
     // el objeto 'items' tiene en la base en firebase
+
+    fb.on( 'value', this.handleDataLoaded );
+  },
+  handleDataLoaded: function () {
+    this.setState( {loaded: true} );
   },
   render: function() {
     console.log( this.state );
@@ -25,7 +31,10 @@ var Hello = React.createClass({
           To-Do List
         </h2>
         <Header itemsStore={this.firebaseRefs.items} />
-        <List items={this.state.items} />
+        <hr />
+        <div className={ "content " + (this.state.loaded ? "loaded": "")}>
+          <List items={this.state.items} />
+        </div>
       </div>
     </div>
   }
