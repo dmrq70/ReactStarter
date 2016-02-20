@@ -4,7 +4,8 @@ module.exports = React.createClass({
   getInitialState: function () {
     return {
       texto: this.props.item.texto,
-      done: this.props.item.done
+      done: this.props.item.done,
+      textChanged: false
     }
   },
   componentWillMount: function () {
@@ -15,15 +16,17 @@ module.exports = React.createClass({
       <span className="input-group-addon">
         <input
           type="checkbox"
-          chekced={this.state.done}
+          checked={this.state.done}
           onChange={this.handleDoneChange}
           />
       </span>
       <input type="text"
         className="form-control"
         value={this.state.texto}
+        onChange={this.handleTextChange}
         />
       <span className="input-group-btn">
+        {this.changesButtons()}
         <button
           className="btn btn-default"
           onClick={this.handleDeleteButton}
@@ -33,6 +36,22 @@ module.exports = React.createClass({
       </span>
     </div>
   },
+  changesButtons: function (){
+    if (!this.state.textChanged) {
+      return null
+    } else {
+      return [
+        <button
+          className="btn btn-default"
+          onClick={this.handleSaveClick}
+          >Save</button>,
+        <button
+          className="btn btn-default"
+          onClick={this.handleUndoClick}
+          >Undo</button>
+      ]
+    }
+  },
   handleDoneChange: function(e) {
     var update = e.target.checked;
     this.setState({done: update});
@@ -40,5 +59,17 @@ module.exports = React.createClass({
   },
   handleDeleteButton: function(e) {
     this.fb.remove();
+  },
+  handleTextChange: function (e) {
+    this.setState({
+      texto: e.target.value,
+      textChanged: true
+    })
+  },
+  handleUndoClick: function() {
+    this.setState({
+      texto: this.props.item.texto,
+      textChanged: false
+    })
   }
 })
