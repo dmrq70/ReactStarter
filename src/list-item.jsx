@@ -66,6 +66,10 @@ module.exports = React.createClass({
       textChanged: true
     })
   },
+  handleSaveClick: function (e) {
+    this.fb.update({texto: this.state.texto});
+    this.setState({textChanged:false});
+  },
   handleUndoClick: function() {
     this.setState({
       texto: this.props.item.texto,
